@@ -1,0 +1,36 @@
+#Putting the data on R
+library(readr)
+fg<-read.csv("C:/B/Lain lain/!2024/FIP Udang 2024/data.csv")
+
+#Instal Cluster packages
+library(cluster)
+
+#Calculate and plotting without clustering 
+agnes(fg)
+ag<-agnes(fg)
+dg<-as.dendrogram(as.hclust(ag))
+plot(dg)
+
+# Ward Hierarchical Clustering
+d<-dist(fg, method ="euclidean") # distance matrix
+fit <- hclust(d, method="ward.D")
+plot(fit) # display dendogram
+groups <-cutree(fit, k=5) # cut tree into 5 clusters
+# draw dendogram with red borders around the 5 clusters
+rect.hclust(fit, k=5, border="blue") 
+
+
+
+#Ward Hierarchical Clustering with Bootstrapped p values
+#this package are only for column. so make use that the data are transposed b4 using.
+install.packages("pvclust")
+library(pvclust)
+fg2<-na.omit(fg)
+
+#transposing
+fgtr2<-t(fg2)
+
+fit<-pvclust(fgtr2,method.hclust = "ward.D",method.dist = "euclidean")
+plot(fit) #making dendrogram with Pvalues
+#add rectangle around groups highly supported by the data
+pvrect(fit,alpha = .95)
